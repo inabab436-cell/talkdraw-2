@@ -15,7 +15,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CharactersRouteImport } from './routes/characters'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as SceneRouteImport } from './routes/scene'
-import { Route as VoiceRouteImport } from './routes/voice'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -47,11 +46,6 @@ const SceneRoute = SceneRouteImport.update({
   path: '/scene',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VoiceRoute = VoiceRouteImport.update({
-  id: '/voice',
-  path: '/voice',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,7 +54,6 @@ export interface FileRoutesByFullPath {
   '/characters': typeof CharactersRoute
   '/dashboard': typeof DashboardRoute
   '/scene': typeof SceneRoute
-  '/voice': typeof VoiceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +62,6 @@ export interface FileRoutesByTo {
   '/characters': typeof CharactersRoute
   '/dashboard': typeof DashboardRoute
   '/scene': typeof SceneRoute
-  '/voice': typeof VoiceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,27 +71,12 @@ export interface FileRoutesById {
   '/characters': typeof CharactersRoute
   '/dashboard': typeof DashboardRoute
   '/scene': typeof SceneRoute
-  '/voice': typeof VoiceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/about'
-    | '/auth'
-    | '/characters'
-    | '/dashboard'
-    | '/scene'
-    | '/voice'
+  fullPaths: '/' | '/about' | '/auth' | '/characters' | '/dashboard' | '/scene'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/about'
-    | '/auth'
-    | '/characters'
-    | '/dashboard'
-    | '/scene'
-    | '/voice'
+  to: '/' | '/about' | '/auth' | '/characters' | '/dashboard' | '/scene'
   id:
     | '__root__'
     | '/'
@@ -108,7 +85,6 @@ export interface FileRouteTypes {
     | '/characters'
     | '/dashboard'
     | '/scene'
-    | '/voice'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +94,6 @@ export interface RootRouteChildren {
   CharactersRoute: typeof CharactersRoute
   DashboardRoute: typeof DashboardRoute
   SceneRoute: typeof SceneRoute
-  VoiceRoute: typeof VoiceRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -165,13 +140,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SceneRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/voice': {
-      id: '/voice'
-      path: '/voice'
-      fullPath: '/voice'
-      preLoaderRoute: typeof VoiceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -182,7 +150,6 @@ const rootRouteChildren: RootRouteChildren = {
   CharactersRoute: CharactersRoute,
   DashboardRoute: DashboardRoute,
   SceneRoute: SceneRoute,
-  VoiceRoute: VoiceRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
