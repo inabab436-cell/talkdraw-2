@@ -86,9 +86,11 @@ function Index() {
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {characters.map((character) => (
-            <article
+            <Link
               key={character.id}
-              className="panel group overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1"
+              to="/scene"
+              search={{ id: character.id }}
+              className="panel group block overflow-hidden rounded-2xl transition-transform duration-300 hover:-translate-y-1"
             >
               <div className="relative aspect-[3/4] overflow-hidden">
                 <img
@@ -104,7 +106,7 @@ function Index() {
                 <h3 className="font-display text-lg font-bold">{character.name}</h3>
                 <p className="text-xs text-accent">{character.title}</p>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>
