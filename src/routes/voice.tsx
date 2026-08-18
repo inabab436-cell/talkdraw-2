@@ -104,12 +104,21 @@ function VoicePage() {
             <Stat label="Plan" value={s.tier ?? "—"} />
             <Stat
               label="Credit left"
-              value={`${(s.charactersRemaining ?? 0).toLocaleString()} chars`}
+              value={
+                s.charactersLimit
+                  ? `${(s.charactersRemaining ?? 0).toLocaleString()} chars`
+                  : "Not readable"
+              }
             />
             <Stat
               label="Used"
-              value={`${(s.charactersUsed ?? 0).toLocaleString()} / ${(s.charactersLimit ?? 0).toLocaleString()}`}
+              value={
+                s.charactersLimit
+                  ? `${(s.charactersUsed ?? 0).toLocaleString()} / ${s.charactersLimit.toLocaleString()}`
+                  : "Speech verified live"
+              }
             />
+
           </dl>
         ) : null}
       </section>
