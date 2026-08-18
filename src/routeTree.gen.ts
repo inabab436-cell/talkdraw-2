@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CharactersRouteImport } from './routes/characters'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as SceneRouteImport } from './routes/scene'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SceneRoute = SceneRouteImport.update({
+  id: '/scene',
+  path: '/scene',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/characters': typeof CharactersRoute
   '/dashboard': typeof DashboardRoute
+  '/scene': typeof SceneRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/characters': typeof CharactersRoute
   '/dashboard': typeof DashboardRoute
+  '/scene': typeof SceneRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,21 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/characters': typeof CharactersRoute
   '/dashboard': typeof DashboardRoute
+  '/scene': typeof SceneRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/auth' | '/characters' | '/dashboard'
+  fullPaths: '/' | '/about' | '/auth' | '/characters' | '/dashboard' | '/scene'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/auth' | '/characters' | '/dashboard'
-  id: '__root__' | '/' | '/about' | '/auth' | '/characters' | '/dashboard'
+  to: '/' | '/about' | '/auth' | '/characters' | '/dashboard' | '/scene'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/auth'
+    | '/characters'
+    | '/dashboard'
+    | '/scene'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +93,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CharactersRoute: typeof CharactersRoute
   DashboardRoute: typeof DashboardRoute
+  SceneRoute: typeof SceneRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +133,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scene': {
+      id: '/scene'
+      path: '/scene'
+      fullPath: '/scene'
+      preLoaderRoute: typeof SceneRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +149,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CharactersRoute: CharactersRoute,
   DashboardRoute: DashboardRoute,
+  SceneRoute: SceneRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
