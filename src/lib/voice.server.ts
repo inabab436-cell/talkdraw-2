@@ -28,6 +28,18 @@ export async function getVoiceStatus(): Promise<VoiceStatus> {
 
   if (!res.ok) {
     const body = await res.text();
+    // Some keys are scoped to speech only and cannot read the account summary.
+    if (res.status === 401 && body.includes("missing_permissions")) {
+      const probe = await probeSpeech(key);
+      return probe.ok
+        ? {
+            connected: true,
+            message:
+              "Key is live and generating speech. It is scoped to speech only, so the credit balance is not readable.",
+            tier: "speech-only key",
+          }
+        : { connected: false, message: probe.message };
+    }
     return {
       connected: false,
       message: `ElevenLabs rejected the key (${res.status}): ${body.slice(0, 200)}`,
