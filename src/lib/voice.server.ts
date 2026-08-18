@@ -16,6 +16,22 @@ function apiKey(): string {
   return key;
 }
 
+async function probeSpeech(key: string): Promise<{ ok: boolean; message: string }> {
+  const res = await fetch(
+    `${API}/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL?output_format=mp3_22050_32`,
+    {
+      method: "POST",
+      headers: { "xi-api-key": key, "Content-Type": "application/json" },
+      body: JSON.stringify({ text: "Hi.", model_id: "eleven_multilingual_v2" }),
+    },
+  );
+  if (res.ok) return { ok: true, message: "Speech generation works." };
+  const body = await res.text();
+  if (res.status === 401 && body.includes("quota"))
+    return { ok: false, message: "The key is valid but has no character credit left." };
+  return { ok: false, message: `Voice check failed (${res.status}): ${body.slice(0, 200)}` };
+}
+
 export async function getVoiceStatus(): Promise<VoiceStatus> {
   const key = process.env["ELEVENLABS_API_KEY"];
   if (!key) {
