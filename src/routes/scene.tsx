@@ -27,7 +27,7 @@ export const Route = createFileRoute("/scene")({
 
 function ScenePage() {
   const { id } = Route.useSearch();
-  const character = characters.find((c) => c.id === id) ?? characters[0];
+  const character = characters.find((c) => c.id === id) ?? characters[0]!;
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-12">
