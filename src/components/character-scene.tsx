@@ -1,8 +1,9 @@
 import { useCallback, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2 } from "lucide-react";
+import { Loader2, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 import { reactToTouch } from "@/lib/touch.functions";
+import { speakLine } from "@/lib/voice.functions";
 import { useCharacterTouch } from "@/lib/touch/useCharacterTouch";
 import type {
   AiTouchDecision,
@@ -28,6 +29,31 @@ const clamp = (n: number) => Math.max(-1, Math.min(1, n));
 
 export function CharacterScene({ character }: { character: Character }) {
   const call = useServerFn(reactToTouch);
+  const speak = useServerFn(speakLine);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [speaking, setSpeaking] = useState(false);
+
+  const playLine = useCallback(
+    async (text: string) => {
+      if (!text.trim()) return;
+      try {
+        setSpeaking(true);
+        const { audioBase64 } = (await speak({
+          data: { text: text.slice(0, 600), voiceId: character.voiceId },
+        })) as { audioBase64: string };
+        audioRef.current?.pause();
+        const audio = new Audio(`data:audio/mpeg;base64,${audioBase64}`);
+        audioRef.current = audio;
+        audio.onended = () => setSpeaking(false);
+        await audio.play();
+      } catch (error) {
+        setSpeaking(false);
+        toast.error(error instanceof Error ? error.message : "Voice playback failed.");
+      }
+    },
+    [character.voiceId, speak],
+  );
+
   const [state, setState] = useState<CharacterState>({
     mood: "neutral",
     affinity: 0,
@@ -79,6 +105,7 @@ export function CharacterScene({ character }: { character: Character }) {
           interactionCount: prev.interactionCount + 1,
         }));
         setTurns((prev) => [{ touch, decision }, ...prev].slice(0, 12));
+        void playLine(decision.speech);
       } catch (error) {
         toast.error(error instanceof Error ? error.message : "The character could not respond.");
       } finally {
@@ -86,7 +113,7 @@ export function CharacterScene({ character }: { character: Character }) {
         setThinking(false);
       }
     },
-    [call, character, state, turns],
+    [call, character, state, turns, playLine],
   );
 
   const { frameRef, pressPoint, pressing, handlers } = useCharacterTouch({ onTouch: handleTouch });
@@ -138,9 +165,23 @@ export function CharacterScene({ character }: { character: Character }) {
                   {latest.decision.expression}
                 </p>
                 <p className="mt-2 text-sm">{latest.decision.speech}</p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  tone: {latest.decision.voiceTone}
-                </p>
+                <div className="pointer-events-auto mt-2 flex items-center justify-between gap-3">
+                  <p className="text-xs text-muted-foreground">
+                    tone: {latest.decision.voiceTone}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void playLine(latest.decision.speech)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border/70 px-3 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {speaking ? (
+                      <Volume2 className="h-3.5 w-3.5 animate-pulse text-primary" />
+                    ) : (
+                      <Volume2 className="h-3.5 w-3.5" />
+                    )}
+                    {speaking ? "speaking" : "replay voice"}
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="panel rounded-2xl p-4 text-sm text-muted-foreground">
